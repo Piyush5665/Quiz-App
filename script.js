@@ -1,40 +1,64 @@
-const url = "https://opentdb.com/api.php?amount=10";
+//https://opentdb.com/api.php?amount=10;
 
-window.addEventListener("load", fetchQs);
-
-const options = Array.from(document.querySelectorAll(".options p"));
+const url = "https://opentdb.com/api.php?amount=1";
+const options = Array.from(document.querySelectorAll(".options li"));
 const check_ans = document.getElementById("check_ans");
-const index=0;
-const score=0;
+let Ques_no = 0, score = 0, correct_ans = "";
 
-async function fetchQs(index) {
+
+// window.addEventListener("load", fetchQs);
+document.addEventListener("DOMContentLoaded", () => {
+  fetchQs();
+});
+
+
+async function fetchQs() {
   const res = await fetch(`${url}`);
   const data = await res.json();
-  formQ(data.results, index);
+  // console.log(data.results[0]);
+  formQ(data.results[0]);
 }
 
-function formQ(array, index) {
+function formQ(data) {
   Q = document.querySelector(".question");
   Q_no = document.querySelector(".question_no");
   category = document.querySelector(".category span");
 
-  incorrect_ans = array[index].incorrect_answers;
-  correct_ans = array[index].correct_answer;
-  ans_correct(correct_ans);
+  incorrect_ans = data.incorrect_answers;
+  correct_ans = data.correct_answer;
+
   randomAppend(incorrect_ans, correct_ans);
 
   for (let i = 0; i < options.length; i++) {
     if (incorrect_ans.length == 2 && i > 1) {
-      options[i].closest("li").classList.add("none");
+      options[i].classList.add("none");
     } else {
-      options[i].closest("li").classList.remove("none");
-      options[i].innerHTML = `${i + 1}. ${incorrect_ans[i]}`;
+      options[i].classList.remove("none");
+      options[i].querySelector("p").innerHTML = `${i + 1}. ${incorrect_ans[i]}`;
     }
   }
 
-  Q.innerHTML = array[index].question;
-  Q_no.innerText = `Q${index + 1}`;
-  category.innerText = array[index].category;
+  Q.innerHTML = data.question;
+  Ques_no++;
+  Q_no.innerText = `Q${Ques_no}.`;
+  category.innerHTML = data.category;
+  selectQ();
+}
+
+function selectQ() {
+  options.forEach((option) => {
+    option.addEventListener("click", () => {
+
+      const selectedElement = options.find((li) => li.classList.contains("selected"));
+      
+      if (selectedElement) {
+        selectedElement.classList.remove("selected");
+      }
+
+      option.classList.add("selected");
+
+    });
+  });
 }
 
 function randomAppend(incorrect, correct) {
@@ -42,23 +66,11 @@ function randomAppend(incorrect, correct) {
   incorrect.splice(random_index, 0, correct);
 }
 
-let currentNav = null;
-function onNavItem(id) {
-  const navItem = document.getElementById(id);
-  currentNav?.classList.remove("selected");
-  currentNav = navItem;
-  currentNav?.classList.add("selected");
+check_ans.addEventListener("click",checkAnswer);
+
+function checkAnswer(){
+  const selectedElement = options.find((li) => li.classList.contains("selected"));
+  console.log(selectedElement.children[0].textContent.slice(3));
+  
+  
 }
-
-check_ans.addEventListener("click",ans_correct);
-
-// function ans_correct(correct_ans) {
-//     selected = document.querySelector(".options ul .selected p");
-//     if (!selected) return;
-//     if(selected.innerText==correct_ans){
-//         score++;
-//         fetchQs(index+1);
-//     }
-
-// }
-
