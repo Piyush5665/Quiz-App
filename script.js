@@ -136,7 +136,7 @@ function checkCount() {
   } else {
     setTimeout(() => {
       fetchQs();
-    }, 400);
+    }, 500);
   }
 }
 
