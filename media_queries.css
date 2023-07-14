@@ -1,0 +1,13 @@
+@media (max-width:678px){
+    
+    .wrapper {
+        width: 82%;
+        height: 90%;
+        padding: 1.5rem 1rem 3rem 1rem;
+        margin-top: 5px;
+    }
+
+    .options{
+        width: 95%;
+    }
+}
